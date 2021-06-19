@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'views/home.dart';
 
-void main() {
+void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 

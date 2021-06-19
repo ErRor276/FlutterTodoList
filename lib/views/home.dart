@@ -1,28 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:todo_list/state.dart';
 import 'package:todo_list/views/widgets/fullscreen_dialog.dart';
 import 'package:todo_list/views/widgets/searchbar.dart';
 import 'package:todo_list/views/widgets/todo_listview.dart';
 import 'package:todo_list/views/widgets/toolbar.dart';
-
 import 'widgets/header.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends HookWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var list = [
-      "hello",
-      "hi",
-      "bonjour",
-      "hello",
-      "hi",
-      "bonjour",
-      "hello",
-      "hi",
-      "bonjour"
-    ];
     print('building MyHomePage');
+    context.read(todoListProvider.notifier).init();
     var allPadding = 20.0;
     var topPadding = MediaQuery.of(context).viewPadding.top;
     var botPadding = MediaQuery.of(context).viewPadding.bottom;

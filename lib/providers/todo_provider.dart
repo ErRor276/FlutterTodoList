@@ -1,42 +1,90 @@
+import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_list/constants.dart';
 import 'package:todo_list/models/todo.dart';
 import 'package:todo_list/state.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
+var _todoBox;
 
 /// An object that controls a list of [Todo].
 class TodoListNotifier extends StateNotifier<List<Todo>> {
-  TodoListNotifier([List<Todo>? initialTodos]) : super(initialTodos ?? []);
+  TodoListNotifier() : super([]) {
+    init();
+  }
+
+  void init() async {
+    if (!initiated) {
+      initiated = true;
+      print("in init");
+      await Hive.initFlutter();
+      print("after call");
+      Hive.registerAdapter<Todo>(TodoAdapter());
+      await Hive.openBox<Todo>(todoBox).then((value) {
+        print("db called");
+        _todoBox = value;
+        _todoBox.putAll({
+          'todo-0': Todo(
+              id: 'todo-0',
+              name: "Flutter TodoList Project",
+              description: 'hi',
+              date: "27th Jun",
+              time: "9:00am"),
+          'todo-1': Todo(
+            id: 'todo-1',
+            name: "Write Portfolio Website",
+            description: 'hi',
+          ),
+          'todo-2': Todo(
+            id: 'todo-2',
+            name: "Learn Containers",
+            description: 'hi',
+          ),
+        });
+        List<Todo> todos = _todoBox.values.toList();
+        state = [...todos];
+      });
+    }
+  }
 
   void add({required String name, description, date, time}) {
+    var uid = _uuid.v4();
+    var todo = Todo(
+      id: uid,
+      name: name,
+      description: description ?? "",
+      date: date ?? "",
+      time: time ?? "",
+    );
+    _todoBox.put(uid, todo);
     state = [
       ...state,
-      Todo(
-        id: _uuid.v4(),
-        name: name,
-        description: description ?? "",
-        date: date ?? "",
-        time: time ?? "",
-      ),
+      todo,
     ];
   }
 
   void toggle(String id) {
-    state = [
-      for (final todo in state)
-        if (todo.id == id)
-          Todo(
-            id: todo.id,
-            completed: !todo.completed,
-            name: todo.name,
-            description: todo.description,
-            date: todo.date,
-            time: todo.time,
-          )
-        else
-          todo,
-    ];
+    var todoList = [];
+    var updatedTodo;
+    for (final todo in state) {
+      if (todo.id == id) {
+        updatedTodo = Todo(
+          id: todo.id,
+          completed: !todo.completed,
+          name: todo.name,
+          description: todo.description,
+          date: todo.date,
+          time: todo.time,
+        );
+        todoList.add(updatedTodo);
+      } else {
+        todoList.add(todo);
+      }
+    }
+    _todoBox.put(updatedTodo.id, updatedTodo);
+    state = [...todoList];
   }
 
   void edit({
@@ -46,23 +94,29 @@ class TodoListNotifier extends StateNotifier<List<Todo>> {
     date,
     time,
   }) {
-    state = [
-      for (final todo in state)
-        if (todo.id == id)
-          Todo(
-            id: todo.id,
-            completed: todo.completed,
-            name: name ?? todo.name,
-            description: description ?? todo.description,
-            date: date ?? todo.date,
-            time: time ?? todo.time,
-          )
-        else
-          todo,
-    ];
+    var todoList = [];
+    var updatedTodo;
+    for (final todo in state) {
+      if (todo.id == id) {
+        updatedTodo = Todo(
+          id: todo.id,
+          completed: todo.completed,
+          name: name ?? todo.name,
+          description: description ?? todo.description,
+          date: date ?? todo.date,
+          time: time ?? todo.time,
+        );
+        todoList.add(updatedTodo);
+      } else {
+        todoList.add(todo);
+      }
+    }
+    _todoBox.put(updatedTodo.id, updatedTodo);
+    state = [...todoList];
   }
 
   void remove(Todo target) {
+    _todoBox.delete(target.id);
     state = state.where((todo) => todo.id != target.id).toList();
   }
 }
