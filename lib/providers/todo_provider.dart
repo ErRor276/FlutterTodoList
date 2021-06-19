@@ -25,24 +25,6 @@ class TodoListNotifier extends StateNotifier<List<Todo>> {
       await Hive.openBox<Todo>(todoBox).then((value) {
         print("db called");
         _todoBox = value;
-        _todoBox.putAll({
-          'todo-0': Todo(
-              id: 'todo-0',
-              name: "Flutter TodoList Project",
-              description: 'hi',
-              date: "27th Jun",
-              time: "9:00am"),
-          'todo-1': Todo(
-            id: 'todo-1',
-            name: "Write Portfolio Website",
-            description: 'hi',
-          ),
-          'todo-2': Todo(
-            id: 'todo-2',
-            name: "Learn Containers",
-            description: 'hi',
-          ),
-        });
         List<Todo> todos = _todoBox.values.toList();
         state = [...todos];
       });
