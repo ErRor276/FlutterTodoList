@@ -40,7 +40,7 @@ class FullScreenDialog extends HookWidget {
       pickedTime.value = todo?.time ?? "";
     }, const []);
 
-    var allPadding = 4.0;
+    var allPadding = 8.0; // 4 before
     var topPadding = MediaQuery.of(context).viewPadding.top;
     var botPadding = MediaQuery.of(context).viewPadding.bottom;
     var padding = EdgeInsets.fromLTRB(
@@ -349,7 +349,8 @@ class FullScreenDialog extends HookWidget {
     timeString += (hour % 12).toString();
 
     // adding minute
-    timeString += ":$min";
+    var minString = min < 10 ? "0$min" : min;
+    timeString += ":$minString";
 
     // adding suffix
     if ((hour / 12).floor() == 1) {
