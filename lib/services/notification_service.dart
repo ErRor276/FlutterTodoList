@@ -23,7 +23,7 @@ class NotificationService {
           importance: Importance.high,
           priority: Priority.high);
 
-  Future<void> init() async {
+  Future<bool> init() async {
     final AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('clipboard_solid');
 
@@ -44,6 +44,8 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: selectNotification);
+
+    return true;
   }
 
   Future scheduleNotification({

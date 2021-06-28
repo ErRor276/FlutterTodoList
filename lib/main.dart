@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:todo_list/services/database.dart';
 import 'package:todo_list/services/notification_service.dart';
 
 import 'views/home.dart';
 
+var dbInit = false;
+var notiInit = false;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService().init();
+  dbInit = await Database().init();
+  print("dbInit: $dbInit");
+  notiInit = await NotificationService().init();
+  print("notiInit: $notiInit");
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -29,7 +36,9 @@ class MyApp extends StatelessWidget {
           bodyText2: TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
         ),
       ),
-      home: HomePage(),
+      home: (dbInit && notiInit)
+          ? HomePage()
+          : Scaffold(body: Center(child: CircularProgressIndicator())),
     );
   }
 }

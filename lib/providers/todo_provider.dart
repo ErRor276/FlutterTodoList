@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_list/constants.dart';
 import 'package:todo_list/models/todo.dart';
+import 'package:todo_list/services/database.dart';
 import 'package:todo_list/services/notification_service.dart';
 import 'package:todo_list/state.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -16,19 +17,24 @@ class TodoListNotifier extends StateNotifier<List<Todo>> {
   }
 
   void init() async {
-    if (!initiated) {
-      initiated = true;
-      print("in init");
-      await Hive.initFlutter();
-      print("after call");
-      Hive.registerAdapter<Todo>(TodoAdapter());
-      await Hive.openBox<Todo>(todoBox).then((value) {
-        print("db called");
-        _todoBox = value;
-        List<Todo> todos = _todoBox.values.toList();
-        state = [...todos];
-      });
-    }
+    // if (!initiated) {
+    //   initiated = true;
+    //   print("in init");
+    //   await Hive.initFlutter();
+    //   print("after call");
+    //   Hive.registerAdapter<Todo>(TodoAdapter());
+    //   await Hive.openBox<Todo>(todoBox).then((value) {
+    //     print("db called");
+    //     _todoBox = value;
+    //     List<Todo> todos = _todoBox.values.toList();
+    //     state = [...todos];
+    //   });
+    // }
+    Database().getBox().then((value) {
+      _todoBox = value;
+      List<Todo> todos = _todoBox.values.toList();
+      state = [...todos];
+    });
   }
 
   Future add({required String name, description, date, time}) async {
