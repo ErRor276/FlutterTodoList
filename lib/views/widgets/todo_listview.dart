@@ -10,9 +10,14 @@ import 'package:todo_list/views/widgets/todo_dialog.dart';
 import 'todo_item.dart';
 
 class TodoListView extends HookWidget {
-  const TodoListView({Key? key, required this.layoutData}) : super(key: key);
+  const TodoListView({
+    Key? key,
+    required this.layoutData,
+    required this.isSmallMobile,
+  }) : super(key: key);
 
   final Layout layoutData;
+  final bool isSmallMobile;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,7 @@ class TodoListView extends HookWidget {
         for (var i = 0; i < todoList.length; i++) ...[
           if (i > 0)
             SizedBox(
-              height: 16,
+              height: layoutData.padding1,
             ),
           Dismissible(
             key: ValueKey(todoList[i].id),
@@ -55,6 +60,7 @@ class TodoListView extends HookWidget {
                       type: DialogType.edit,
                       todo: todoList[i],
                       layoutData: layoutData,
+                      isSmallMobile: isSmallMobile,
                     );
                   },
                 );
@@ -66,7 +72,7 @@ class TodoListView extends HookWidget {
             ),
           ),
         ],
-        SizedBox(height: 32),
+        SizedBox(height: layoutData.padding1 * 2),
       ],
     );
   }

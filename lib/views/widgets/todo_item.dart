@@ -19,7 +19,7 @@ class TodoItem extends HookWidget {
 
     return Card(
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(layoutData.padding1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

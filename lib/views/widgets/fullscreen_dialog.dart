@@ -5,6 +5,7 @@ import 'package:todo_list/models/layout.dart';
 import 'package:todo_list/models/todo.dart';
 import 'package:todo_list/state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:todo_list/utils/responsive.dart';
 
 enum DialogType { add, edit }
 
@@ -14,11 +15,13 @@ class FullScreenDialog extends HookWidget {
     required this.type,
     this.todo,
     required this.layoutData,
+    required this.isSmallMobile,
   }) : super(key: key);
 
   final DialogType type;
   final Todo? todo;
   final Layout layoutData;
+  final bool isSmallMobile;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +39,279 @@ class FullScreenDialog extends HookWidget {
     final pickedTime = useState("");
     final validated = useState(true);
 
+    var formBody = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(
+              child: Icon(
+                Icons.close,
+                color: Colors.black54,
+                size: (layoutData.padding2 * 2) + (layoutData.padding1 / 4),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            Expanded(
+              child: Text(
+                type == DialogType.add ? "Add Todo" : "Edit Todo",
+                textAlign: TextAlign.center,
+                style: layoutData.headline2,
+              ),
+            ),
+            SizedBox(width: layoutData.padding1 * 4),
+          ],
+        ),
+        Material(
+          color: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.all(layoutData.padding2 * 2),
+            child: TextField(
+              focusNode: nameFocusNode,
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: 'Name',
+                labelStyle: TextStyle(
+                  color: nameIsFocused
+                      ? Theme.of(context).accentColor
+                      : Colors.black45,
+                ),
+                errorText: !validated.value ? 'Name Can\'t Be Empty' : null,
+                border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).accentColor,
+                  ),
+                ),
+              ),
+              cursorColor: Theme.of(context).accentColor,
+              onSubmitted: (value) {
+                nameFocusNode.unfocus();
+              },
+            ),
+          ),
+        ),
+        Material(
+          color: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: layoutData.padding2 * 2),
+            child: TextField(
+              focusNode: descFocusNode,
+              controller: descController,
+              maxLines: 8,
+              decoration: InputDecoration(
+                labelText: 'Description',
+                labelStyle: TextStyle(
+                  color: descIsFocused
+                      ? Theme.of(context).accentColor
+                      : Colors.black45,
+                ),
+                border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).accentColor,
+                  ),
+                ),
+              ),
+              cursorColor: Theme.of(context).accentColor,
+              onSubmitted: (value) {
+                descFocusNode.unfocus();
+              },
+            ),
+          ),
+        ),
+        SizedBox(height: 32),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: layoutData.padding2 * 2),
+          child: Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  DatePicker.showDatePicker(
+                    context,
+                    showTitleActions: true,
+                    minTime: DateTime.now(),
+                    onChanged: (date) {
+                      print('change $date');
+                    },
+                    onConfirm: (date) {
+                      pickedDate.value = dateFormatter(date);
+                      print('confirm $pickedDate');
+                    },
+                    currentTime: DateTime.now(),
+                    locale: LocaleType.en,
+                  );
+                },
+                child: Container(
+                  width: layoutData.padding2 * 8,
+                  padding: EdgeInsets.all(layoutData.padding1 / 4),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.date_range,
+                        color: Colors.white,
+                      ),
+                      Expanded(
+                        child: Text(
+                          "Pick Date",
+                          textAlign: TextAlign.center,
+                          style: layoutData.bodyText2.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    Color(0xFF757575),
+                  ),
+                  elevation: MaterialStateProperty.all(1.0),
+                ),
+              ),
+              SizedBox(width: layoutData.padding1 * 2),
+              Expanded(
+                child: Text(
+                  pickedDate.value,
+                  style: layoutData.bodyText1.copyWith(
+                    decoration: TextDecoration.none,
+                    color: Color(0xFF212121),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: layoutData.padding1 * 2),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: layoutData.padding2 * 2),
+          child: Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  DatePicker.showTimePicker(
+                    context,
+                    showTitleActions: true,
+                    showSecondsColumn: false,
+                    onChanged: (date) {
+                      print('change $date');
+                    },
+                    onConfirm: (date) {
+                      print('confirm $date');
+                      pickedTime.value = timeFormatter(date);
+                    },
+                    currentTime: DateTime.now(),
+                    locale: LocaleType.en,
+                  );
+                },
+                child: Container(
+                  width: layoutData.padding2 * 8,
+                  padding: EdgeInsets.all(layoutData.padding1 / 4),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.timer,
+                        color: Colors.white,
+                      ),
+                      Expanded(
+                        child: Text(
+                          "Pick Time",
+                          textAlign: TextAlign.center,
+                          style: layoutData.bodyText2.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    Color(0xFF757575),
+                  ),
+                  elevation: MaterialStateProperty.all(1.0),
+                ),
+              ),
+              SizedBox(width: layoutData.padding1 * 2),
+              Expanded(
+                child: Text(
+                  pickedTime.value,
+                  style: layoutData.bodyText1.copyWith(
+                    decoration: TextDecoration.none,
+                    color: Color(0xFF212121),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        isSmallMobile
+            ? SizedBox(height: layoutData.padding1 * 2)
+            : Expanded(child: SizedBox()),
+        TextButton(
+          onPressed: () async {
+            nameController.text.isEmpty
+                ? validated.value = false
+                : validated.value = true;
+            var date = pickedDate.value;
+            var time = pickedTime.value;
+            if (validated.value) {
+              if (type == DialogType.add) {
+                context
+                    .read(todoListProvider.notifier)
+                    .add(
+                      name: nameController.text,
+                      description: descController.text,
+                      date: date,
+                      time: time,
+                    )
+                    .then((value) => Navigator.of(context).pop());
+              } else {
+                await context
+                    .read(todoListProvider.notifier)
+                    .edit(
+                      id: todo!.id,
+                      name: nameController.text,
+                      description: descController.text,
+                      date: date,
+                      time: time,
+                    )
+                    .then((value) => Navigator.of(context).pop());
+              }
+            }
+          },
+          child: Container(
+            width: layoutData.padding1 * 10,
+            height: layoutData.padding2 * 2,
+            padding: EdgeInsets.all(layoutData.padding1 / 4),
+            child: Center(
+              child: Text(
+                "Save",
+                textAlign: TextAlign.center,
+                style: layoutData.bodyText1.copyWith(
+                  decoration: TextDecoration.none,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+              Theme.of(context).accentColor,
+            ),
+            elevation: MaterialStateProperty.all(1.0),
+          ),
+        ),
+        SizedBox(height: layoutData.padding1),
+      ],
+    );
+
     useEffect(() {
       nameController.text = todo?.name ?? "";
       descController.text = todo?.description ?? "";
@@ -48,7 +324,7 @@ class FullScreenDialog extends HookWidget {
     var botPadding = MediaQuery.of(context).viewPadding.bottom;
     var padding = EdgeInsets.fromLTRB(
       allPadding,
-      allPadding + topPadding,
+      allPadding + topPadding + topPaddingSubtract(topPadding),
       allPadding,
       allPadding + botPadding,
     );
@@ -61,264 +337,11 @@ class FullScreenDialog extends HookWidget {
           height: MediaQuery.of(context).size.height,
           padding: padding,
           color: Colors.white,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextButton(
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.black54,
-                      size: 28,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  Expanded(
-                    child: Text(
-                      type == DialogType.add ? "Add Todo" : "Edit Todo",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        decoration: TextDecoration.none,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 24,
-                        letterSpacing: 0,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 64),
-                ],
-              ),
-              Material(
-                color: Colors.white,
-                child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: TextField(
-                    focusNode: nameFocusNode,
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      labelStyle: TextStyle(
-                        color: nameIsFocused
-                            ? Theme.of(context).accentColor
-                            : Colors.black45,
-                      ),
-                      errorText:
-                          !validated.value ? 'Name Can\'t Be Empty' : null,
-                      border: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context).accentColor,
-                        ),
-                      ),
-                    ),
-                    cursorColor: Theme.of(context).accentColor,
-                    onSubmitted: (value) {
-                      nameFocusNode.unfocus();
-                    },
-                  ),
-                ),
-              ),
-              Material(
-                color: Colors.white,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: TextField(
-                    focusNode: descFocusNode,
-                    controller: descController,
-                    maxLines: 8,
-                    decoration: InputDecoration(
-                      labelText: 'Description',
-                      labelStyle: TextStyle(
-                        color: descIsFocused
-                            ? Theme.of(context).accentColor
-                            : Colors.black45,
-                      ),
-                      border: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context).accentColor,
-                        ),
-                      ),
-                    ),
-                    cursorColor: Theme.of(context).accentColor,
-                    onSubmitted: (value) {
-                      descFocusNode.unfocus();
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 32),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        DatePicker.showDatePicker(
-                          context,
-                          showTitleActions: true,
-                          minTime: DateTime.now(),
-                          onChanged: (date) {
-                            print('change $date');
-                          },
-                          onConfirm: (date) {
-                            pickedDate.value = dateFormatter(date);
-                            print('confirm $pickedDate');
-                          },
-                          currentTime: DateTime.now(),
-                          locale: LocaleType.en,
-                        );
-                      },
-                      child: Container(
-                        width: 100,
-                        padding: EdgeInsets.all(4),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.date_range,
-                              color: Colors.white,
-                            ),
-                            Expanded(
-                              child: Text(
-                                "Pick Date",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                          Color(0xFF757575),
-                        ),
-                        elevation: MaterialStateProperty.all(1.0),
-                      ),
-                    ),
-                    SizedBox(width: 32),
-                    Expanded(
-                      child: Text(
-                        pickedDate.value,
-                        style: layoutData.bodyText1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 32),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        DatePicker.showTimePicker(
-                          context,
-                          showTitleActions: true,
-                          showSecondsColumn: false,
-                          onChanged: (date) {
-                            print('change $date');
-                          },
-                          onConfirm: (date) {
-                            print('confirm $date');
-                            pickedTime.value = timeFormatter(date);
-                          },
-                          currentTime: DateTime.now(),
-                          locale: LocaleType.en,
-                        );
-                      },
-                      child: Container(
-                        width: 100,
-                        padding: EdgeInsets.all(4),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.timer,
-                              color: Colors.white,
-                            ),
-                            Expanded(
-                              child: Text(
-                                "Pick Time",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                          Color(0xFF757575),
-                        ),
-                        elevation: MaterialStateProperty.all(1.0),
-                      ),
-                    ),
-                    SizedBox(width: 32),
-                    Expanded(
-                      child: Text(
-                        pickedTime.value,
-                        style: layoutData.bodyText1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(child: SizedBox()),
-              TextButton(
-                onPressed: () async {
-                  nameController.text.isEmpty
-                      ? validated.value = false
-                      : validated.value = true;
-                  var date = pickedDate.value;
-                  var time = pickedTime.value;
-                  if (validated.value) {
-                    if (type == DialogType.add) {
-                      context
-                          .read(todoListProvider.notifier)
-                          .add(
-                            name: nameController.text,
-                            description: descController.text,
-                            date: date,
-                            time: time,
-                          )
-                          .then((value) => Navigator.of(context).pop());
-                    } else {
-                      await context
-                          .read(todoListProvider.notifier)
-                          .edit(
-                            id: todo!.id,
-                            name: nameController.text,
-                            description: descController.text,
-                            date: date,
-                            time: time,
-                          )
-                          .then((value) => Navigator.of(context).pop());
-                    }
-                  }
-                },
-                child: Container(
-                  width: 160,
-                  padding: EdgeInsets.all(4),
-                  child: Text(
-                    "Save",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                    Theme.of(context).accentColor,
-                  ),
-                  elevation: MaterialStateProperty.all(1.0),
-                ),
-              ),
-              SizedBox(height: 16),
-            ],
-          ),
+          child: isSmallMobile
+              ? SingleChildScrollView(
+                  child: formBody,
+                )
+              : formBody,
         ),
       ),
     );

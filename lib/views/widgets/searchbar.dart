@@ -25,6 +25,7 @@ class Searchbar extends HookWidget {
         labelText: 'Search',
         labelStyle: TextStyle(
           color: isFocused ? Theme.of(context).accentColor : Colors.black45,
+          fontSize: layoutData.bodyText2.fontSize,
         ),
         border: InputBorder.none,
         icon: Icon(

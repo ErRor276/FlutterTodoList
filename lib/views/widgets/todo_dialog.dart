@@ -16,19 +16,22 @@ class TodoDialog extends StatelessWidget {
 
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(layoutData.padding1),
       ),
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(layoutData.padding1),
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(layoutData.padding1),
           boxShadow: [
             BoxShadow(
-                color: Colors.black45, offset: Offset(0, 4), blurRadius: 4),
+              color: Colors.black45,
+              offset: Offset(0, layoutData.padding1 / 4),
+              blurRadius: layoutData.padding1 / 4,
+            ),
           ],
         ),
         child: Column(
@@ -39,7 +42,7 @@ class TodoDialog extends StatelessWidget {
               softWrap: true,
               style: layoutData.headline3,
             ),
-            SizedBox(height: 16),
+            SizedBox(height: layoutData.padding1),
             Align(
               alignment: Alignment.centerRight,
               child: Text(
@@ -48,13 +51,13 @@ class TodoDialog extends StatelessWidget {
                 style: layoutData.bodyText2,
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: layoutData.padding1),
             Text(
               todo.description,
               softWrap: true,
               style: layoutData.bodyText1,
             ),
-            SizedBox(height: 16),
+            SizedBox(height: layoutData.padding1),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
