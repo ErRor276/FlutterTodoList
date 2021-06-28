@@ -260,7 +260,7 @@ class FullScreenDialog extends HookWidget {
               ),
               Expanded(child: SizedBox()),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   nameController.text.isEmpty
                       ? validated.value = false
                       : validated.value = true;
@@ -268,23 +268,27 @@ class FullScreenDialog extends HookWidget {
                   var time = pickedTime.value;
                   if (validated.value) {
                     if (type == DialogType.add) {
-                      context.read(todoListProvider.notifier).add(
+                      context
+                          .read(todoListProvider.notifier)
+                          .add(
                             name: nameController.text,
                             description: descController.text,
                             date: date,
                             time: time,
-                          );
+                          )
+                          .then((value) => Navigator.of(context).pop());
                     } else {
-                      context.read(todoListProvider.notifier).edit(
+                      await context
+                          .read(todoListProvider.notifier)
+                          .edit(
                             id: todo!.id,
                             name: nameController.text,
                             description: descController.text,
                             date: date,
                             time: time,
-                          );
+                          )
+                          .then((value) => Navigator.of(context).pop());
                     }
-
-                    Navigator.of(context).pop();
                   }
                 },
                 child: Container(

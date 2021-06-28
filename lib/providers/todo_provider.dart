@@ -5,7 +5,6 @@ import 'package:todo_list/constants.dart';
 import 'package:todo_list/models/todo.dart';
 import 'package:todo_list/services/notification_service.dart';
 import 'package:todo_list/state.dart';
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 var _todoBox;
@@ -32,7 +31,7 @@ class TodoListNotifier extends StateNotifier<List<Todo>> {
     }
   }
 
-  void add({required String name, description, date, time}) async {
+  Future add({required String name, description, date, time}) async {
     var descriptionTmp = description ?? "";
     var dateTmp = date ?? "";
     var timeTmp = time ?? "";
@@ -43,27 +42,27 @@ class TodoListNotifier extends StateNotifier<List<Todo>> {
       date: dateTmp,
       time: timeTmp,
     );
-    int key = await _todoBox.add(todo);
-    await _todoBox.put(
-        key,
-        Todo(
-          id: key.toString(),
-          name: name,
-          description: descriptionTmp,
-          date: dateTmp,
-          time: timeTmp,
-        ));
-    if (dateTmp != "" && timeTmp != "") {
-      await scheduleNotification(
-          key: key, title: name, date: dateTmp, time: timeTmp);
-    }
-    state = [
-      ...state,
-      todo,
-    ];
+    _todoBox.add(todo).then((key) {
+      var todo = Todo(
+        id: "$key",
+        name: name,
+        description: descriptionTmp,
+        date: dateTmp,
+        time: timeTmp,
+      );
+      _todoBox.put(key, todo);
+      if (dateTmp != "" && timeTmp != "") {
+        scheduleNotification(
+            key: key, title: name, date: dateTmp, time: timeTmp);
+      }
+      state = [
+        ...state,
+        todo,
+      ];
+    });
   }
 
-  void toggle(String id) {
+  Future toggle(String id) async {
     var todoList = [];
     var updatedTodo;
     for (final todo in state) {
@@ -82,10 +81,24 @@ class TodoListNotifier extends StateNotifier<List<Todo>> {
       }
     }
     _todoBox.put(int.parse(updatedTodo.id), updatedTodo);
+    if (updatedTodo.date != "" &&
+        updatedTodo.time != "" &&
+        !updatedTodo.completed) {
+      await scheduleNotification(
+        key: int.parse(updatedTodo.id),
+        title: updatedTodo.name,
+        date: updatedTodo.date,
+        time: updatedTodo.time,
+      );
+    } else if (updatedTodo.date != "" &&
+        updatedTodo.time != "" &&
+        updatedTodo.completed) {
+      await NotificationService().cancelNotification(int.parse(updatedTodo.id));
+    }
     state = [...todoList];
   }
 
-  void edit({
+  Future edit({
     required String id,
     name,
     description,
@@ -123,9 +136,11 @@ class TodoListNotifier extends StateNotifier<List<Todo>> {
     state = [...todoList];
   }
 
-  void remove(Todo target) async {
+  Future remove(Todo target) async {
+    if (target.date != "" && target.time != "") {
+      await NotificationService().cancelNotification(int.parse(target.id));
+    }
     _todoBox.delete(int.parse(target.id));
-    await NotificationService().cancelNotification(int.parse(target.id));
     state = state.where((todo) => todo.id != target.id).toList();
   }
 }
@@ -176,17 +191,19 @@ Future<void> scheduleNotification({
   required String date,
   required String time,
 }) async {
-  await NotificationService().scheduleNotification(
-    id: key,
-    title: title,
-    body: "Time to do $title",
-    scheduledDatetime: schedule(date, time),
-  );
+  var now = tz.TZDateTime.now(tz.local);
+  var scheduled = schedule(date, time, now);
+  if (now.compareTo(scheduled) < 0) {
+    await NotificationService().scheduleNotification(
+      id: key,
+      title: title,
+      body: "Time to do $title",
+      scheduledDatetime: scheduled,
+    );
+  }
 }
 
-dynamic schedule(String date, String time) {
-  var now = tz.TZDateTime.now(tz.local);
-
+dynamic schedule(String date, String time, dynamic now) {
   var dateAry = date.split(" ");
   var timeAry = time.split(" ");
   var timeNumAry = timeAry[0].split(":");

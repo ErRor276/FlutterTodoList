@@ -14,7 +14,6 @@ class TodoListView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final todoList = useProvider(filteredTodoListProvider);
-
     return ListView(
       children: [
         for (var i = 0; i < todoList.length; i++) ...[

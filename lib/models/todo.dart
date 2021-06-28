@@ -28,6 +28,6 @@ class Todo extends HiveObject {
 
   @override
   String toString() {
-    return 'Todo(name: $name, description: $description, date: $date, time: $time, completed: $completed)';
+    return 'Todo(key: $key, name: $name, description: $description, date: $date, time: $time, completed: $completed)';
   }
 }
