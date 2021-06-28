@@ -1,5 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:todo_list/services/database.dart';
 import 'package:todo_list/services/notification_service.dart';
@@ -16,6 +17,8 @@ void main() async {
   notiInit = await NotificationService().init();
   print("notiInit: $notiInit");
 
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(DevicePreview(
     enabled: true,
     builder: (context) => const ProviderScope(child: MyApp()),

@@ -146,7 +146,7 @@ class FullScreenDialog extends HookWidget {
                   );
                 },
                 child: Container(
-                  width: layoutData.padding2 * 8,
+                  width: layoutData.padding2 * 9,
                   padding: EdgeInsets.all(layoutData.padding1 / 4),
                   child: Row(
                     children: [
@@ -210,7 +210,7 @@ class FullScreenDialog extends HookWidget {
                   );
                 },
                 child: Container(
-                  width: layoutData.padding2 * 8,
+                  width: layoutData.padding2 * 9,
                   padding: EdgeInsets.all(layoutData.padding1 / 4),
                   child: Row(
                     children: [
@@ -288,7 +288,7 @@ class FullScreenDialog extends HookWidget {
           },
           child: Container(
             width: layoutData.padding1 * 10,
-            height: layoutData.padding2 * 2,
+            height: (layoutData.padding2 * 2) + (layoutData.padding1 / 4),
             padding: EdgeInsets.all(layoutData.padding1 / 4),
             child: Center(
               child: Text(
