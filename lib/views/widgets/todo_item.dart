@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:todo_list/models/layout.dart';
 import 'package:todo_list/models/todo.dart';
 import 'package:todo_list/state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class TodoItem extends HookWidget {
-  const TodoItem({Key? key, required this.todo}) : super(key: key);
+  const TodoItem({Key? key, required this.todo, required this.layoutData})
+      : super(key: key);
 
   final Todo todo;
+  final Layout layoutData;
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +36,13 @@ class TodoItem extends HookWidget {
                       Expanded(
                         child: Text(
                           todo.name,
-                          style: Theme.of(context).textTheme.bodyText1,
+                          style: layoutData.bodyText1,
                           softWrap: true,
                         ),
                       ),
                       Text(
                         datetimeString,
-                        style: Theme.of(context).textTheme.bodyText2,
+                        style: layoutData.bodyText2,
                         softWrap: true,
                       ),
                     ],

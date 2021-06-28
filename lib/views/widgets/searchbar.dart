@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:todo_list/models/layout.dart';
 import 'package:todo_list/providers/todo_provider.dart';
 
 class Searchbar extends HookWidget {
-  const Searchbar({Key? key}) : super(key: key);
+  const Searchbar({Key? key, required this.layoutData}) : super(key: key);
+
+  final Layout layoutData;
 
   @override
   Widget build(BuildContext context) {

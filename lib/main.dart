@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:todo_list/services/database.dart';
@@ -15,7 +16,10 @@ void main() async {
   notiInit = await NotificationService().init();
   print("notiInit: $notiInit");
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(DevicePreview(
+    enabled: true,
+    builder: (context) => const ProviderScope(child: MyApp()),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -30,12 +34,10 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: Color(0xFF3185FC),
         accentColor: Color(0xFFDA3E52),
-        textTheme: TextTheme(
-          headline6: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-          bodyText1: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-          bodyText2: TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
-        ),
+        fontFamily: 'Roboto',
       ),
+      locale: DevicePreview.locale(context), // Add the locale here
+      builder: DevicePreview.appBuilder, // Add the builder here
       home: (dbInit && notiInit)
           ? HomePage()
           : Scaffold(body: Center(child: CircularProgressIndicator())),

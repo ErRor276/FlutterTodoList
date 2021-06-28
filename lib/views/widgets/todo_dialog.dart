@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list/models/layout.dart';
 import 'package:todo_list/models/todo.dart';
 
 class TodoDialog extends StatelessWidget {
-  const TodoDialog({Key? key, required this.todo}) : super(key: key);
+  const TodoDialog({Key? key, required this.todo, required this.layoutData})
+      : super(key: key);
 
   final Todo todo;
+  final Layout layoutData;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,7 @@ class TodoDialog extends StatelessWidget {
             Text(
               todo.name,
               softWrap: true,
-              style: Theme.of(context).textTheme.headline6,
+              style: layoutData.headline3,
             ),
             SizedBox(height: 16),
             Align(
@@ -42,14 +45,14 @@ class TodoDialog extends StatelessWidget {
               child: Text(
                 datetimeString,
                 softWrap: true,
-                style: Theme.of(context).textTheme.bodyText2,
+                style: layoutData.bodyText2,
               ),
             ),
             SizedBox(height: 16),
             Text(
               todo.description,
               softWrap: true,
-              style: Theme.of(context).textTheme.bodyText1,
+              style: layoutData.bodyText1,
             ),
             SizedBox(height: 16),
             Align(

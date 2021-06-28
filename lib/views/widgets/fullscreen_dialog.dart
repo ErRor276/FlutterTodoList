@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:todo_list/models/layout.dart';
 import 'package:todo_list/models/todo.dart';
 import 'package:todo_list/state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -12,10 +13,12 @@ class FullScreenDialog extends HookWidget {
     Key? key,
     required this.type,
     this.todo,
+    required this.layoutData,
   }) : super(key: key);
 
   final DialogType type;
   final Todo? todo;
+  final Layout layoutData;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +80,13 @@ class FullScreenDialog extends HookWidget {
                     child: Text(
                       type == DialogType.add ? "Add Todo" : "Edit Todo",
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline5,
+                      style: TextStyle(
+                        decoration: TextDecoration.none,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 24,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                   SizedBox(width: 64),
@@ -194,7 +203,7 @@ class FullScreenDialog extends HookWidget {
                     Expanded(
                       child: Text(
                         pickedDate.value,
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: layoutData.bodyText1,
                       ),
                     ),
                   ],
@@ -252,7 +261,7 @@ class FullScreenDialog extends HookWidget {
                     Expanded(
                       child: Text(
                         pickedTime.value,
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: layoutData.bodyText1,
                       ),
                     ),
                   ],

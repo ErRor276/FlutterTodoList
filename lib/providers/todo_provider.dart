@@ -1,7 +1,4 @@
-import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:todo_list/constants.dart';
 import 'package:todo_list/models/todo.dart';
 import 'package:todo_list/services/database.dart';
 import 'package:todo_list/services/notification_service.dart';

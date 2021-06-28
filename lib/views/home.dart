@@ -14,6 +14,12 @@ class HomePage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     print('building MyHomePage');
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    var layout = useProvider(responsiveProvider);
+    context
+        .read(responsiveProvider.notifier)
+        .size(height: height, width: width);
     context.read(todoListProvider.notifier).init();
     var allPadding = 20.0;
     var topPadding = MediaQuery.of(context).viewPadding.top;
@@ -32,13 +38,13 @@ class HomePage extends HookWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Header(header: "Todo List"),
+              Header(header: "Todo List", layoutData: layout),
               SizedBox(height: 12),
-              Searchbar(),
-              Toolbar(),
+              Searchbar(layoutData: layout),
+              Toolbar(layoutData: layout),
               SizedBox(height: 6),
               Expanded(
-                child: TodoListView(),
+                child: TodoListView(layoutData: layout),
               ),
             ],
           ),
@@ -58,6 +64,7 @@ class HomePage extends HookWidget {
                     Animation secondaryAnimation) {
                   return FullScreenDialog(
                     type: DialogType.add,
+                    layoutData: layout,
                   );
                 },
               );

@@ -1,6 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   static final NotificationService _notificationService =
@@ -17,11 +16,13 @@ class NotificationService {
 
   final AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
-          "todo_list123", //Required for Android 8.0 or after
-          "Todo List", //Required for Android 8.0 or after
-          "Show Todos", //Required for Android 8.0 or after
-          importance: Importance.high,
-          priority: Priority.high);
+    "todo_list123", //Required for Android 8.0 or after
+    "Todo List", //Required for Android 8.0 or after
+    "Show Todos", //Required for Android 8.0 or after
+    importance: Importance.high,
+    priority: Priority.high,
+    playSound: true,
+  );
 
   Future<bool> init() async {
     final AndroidInitializationSettings initializationSettingsAndroid =
