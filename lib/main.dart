@@ -19,10 +19,7 @@ void main() async {
 
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(DevicePreview(
-    enabled: true,
-    builder: (context) => const ProviderScope(child: MyApp()),
-  ));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -39,8 +36,6 @@ class MyApp extends StatelessWidget {
         accentColor: Color(0xFFDA3E52),
         fontFamily: 'Roboto',
       ),
-      locale: DevicePreview.locale(context), // Add the locale here
-      builder: DevicePreview.appBuilder, // Add the builder here
       home: (dbInit && notiInit)
           ? HomePage()
           : Scaffold(body: Center(child: CircularProgressIndicator())),
