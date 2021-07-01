@@ -91,11 +91,11 @@ Layout getLayout({required double width}) {
 
 double topPaddingSubtract(double topPadding) {
   if (topPadding <= 24) {
-    return -18.0;
-  } else if (topPadding > 24 && topPadding < 40) {
     return -8.0;
+  } else if (topPadding > 24 && topPadding < 40) {
+    return -4.0;
   } else if (topPadding >= 44) {
-    return -16.0;
+    return -12.0;
   } else {
     return -1.0;
   }

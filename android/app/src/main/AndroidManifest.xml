@@ -2,7 +2,7 @@
     package="com.example.todo_list">
    <application
         android:label="Todo List"
-        android:icon="@drawable/clipboard_solid">
+        android:icon="@drawable/clipboard_frame">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
