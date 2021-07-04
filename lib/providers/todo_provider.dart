@@ -214,14 +214,16 @@ dynamic schedule(String date, String time, dynamic now) {
 
   var year = dateAry.length > 2 ? dateAry[2] : now.year;
   var month = monthToNum(dateAry[1]);
-  var day = dateAry[0].substring(0, dateAry[0].length - 2);
+  var day = int.parse(dateAry[0].substring(0, dateAry[0].length - 2));
+  var dayStr = day < 10 ? "0$day" : day;
   var hour = int.parse(timeNumAry[0]);
   hour += timeZone == "pm" ? 12 : 0;
   var hourStr = hour < 10 ? "0$hour" : hour;
-  var min = timeNumAry[1];
+  var min = int.parse(timeNumAry[1]);
+  var minStr = min < 10 ? "0$min" : min;
 
   var scheduled =
-      tz.TZDateTime.parse(tz.local, "$year-$month-$day $hourStr:$min:00");
+      tz.TZDateTime.parse(tz.local, "$year-$month-$dayStr $hourStr:$minStr:00");
   return scheduled;
 }
 
